@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/survey_navigation"
+    app:startDestination="@id/introductionFragment">
+
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.example.planner.ui.survey.categories.CategoriesFragment"
+        android:label="fragment_categories"
+        tools:layout="@layout/fragment_categories" >
+        <action
+            android:id="@+id/action_categoriesFragment_to_summaryFragment"
+            app:destination="@id/summaryFragment"
+            app:popUpTo="@id/summaryFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_categoriesFragment_to_activitiesFragment"
+            app:destination="@id/activitiesFragment"
+            app:popUpTo="@id/activitiesFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_categoriesFragment_to_educationFragment"
+            app:destination="@id/educationFragment"
+            app:popUpTo="@id/educationFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_categoriesFragment_to_selfCareFragment"
+            app:destination="@id/selfCareFragment"
+            app:popUpTo="@id/selfCareFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_categoriesFragment_to_entertainmentFragment"
+            app:destination="@id/entertainmentFragment"
+            app:popUpTo="@id/entertainmentFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/summaryFragment"
+        android:name="com.example.planner.ui.survey.summary.SummaryFragment"
+        android:label="fragment_summary"
+        tools:layout="@layout/fragment_summary" >
+        <argument
+            android:name="state"
+            app:argType="boolean"
+            android:defaultValue="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/introductionFragment"
+        android:name="com.example.planner.ui.survey.introduction.IntroductionFragment"
+        android:label="fragment_introduction"
+        tools:layout="@layout/fragment_introduction" >
+        <action
+            android:id="@+id/action_hobbiesFragment_to_summaryFragment"
+            app:destination="@id/summaryFragment"
+            app:popUpTo="@id/summaryFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_introductionFragment_to_hobbiesFragment"
+            app:destination="@id/hobbiesFragment"
+            app:popUpTo="@id/hobbiesFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/activitiesFragment"
+        android:name="com.example.planner.ui.survey.questions.activitites.ActivitiesFragment"
+        android:label="ActivitiesFragment" >
+        <action
+            android:id="@+id/action_activitiesFragment_to_entertainmentFragment"
+            app:destination="@id/entertainmentFragment"
+            app:popUpTo="@id/entertainmentFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/educationFragment"
+        android:name="com.example.planner.ui.survey.questions.education.EducationFragment"
+        android:label="EducationFragment" >
+        <action
+            android:id="@+id/action_educationFragment_to_activitiesFragment"
+            app:destination="@id/activitiesFragment"
+            app:popUpTo="@id/activitiesFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/entertainmentFragment"
+        android:name="com.example.planner.ui.survey.questions.entertainment.EntertainmentFragment"
+        android:label="EntertainmentFragment">
+        <action
+            android:id="@+id/action_entertainmentFragment_to_summaryFragment"
+            app:destination="@id/summaryFragment"
+            app:popUpTo="@id/summaryFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/selfCareFragment"
+        android:name="com.example.planner.ui.survey.questions.selfcare.SelfCareFragment"
+        android:label="SelfCareFragment" >
+        <action
+            android:id="@+id/action_selfCareFragment_to_educationFragment"
+            app:destination="@id/educationFragment"
+            app:popUpTo="@id/educationFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/hobbiesFragment"
+        android:name="com.example.planner.ui.survey.questions.hobbies.HobbiesFragment"
+        android:label="HobbiesFragment" >
+        <action
+            android:id="@+id/action_hobbiesFragment_to_categoriesFragment"
+            app:destination="@id/categoriesFragment"
+            app:popUpTo="@id/categoriesFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+</navigation>

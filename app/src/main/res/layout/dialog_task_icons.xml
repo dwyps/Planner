@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_icon_grid_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:numColumns="3"
+    android:horizontalSpacing="10dp"
+    android:verticalSpacing="10dp"
+    android:padding="10dp"
+    android:gravity="center"
+    tools:listitem="@layout/item_icon"
+    tools:context=".ui.main.MainActivity">
+
+</GridView>

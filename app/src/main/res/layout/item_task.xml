@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="taskItem"
+            type="com.example.planner.data.model.Task" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_task_card_layout"
+        android:layout_width="80dp"
+        android:layout_height="100dp"
+        android:layout_margin="10dp"
+        android:backgroundTint="@color/colorTaskBackground"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_marginBottom="30dp">
+
+        <ImageView
+            android:clickable="false"
+            android:id="@+id/item_task_iv_photo"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            app:bindThumbnail="@{taskItem}"
+            tools:src="@drawable/ic_call"
+            android:adjustViewBounds="true"/>
+
+        <TextView
+            android:id="@+id/item_task_tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="60dp"
+            tools:text="Sister"
+            android:text="@{taskItem.title}"
+            android:textSize="18sp"/>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

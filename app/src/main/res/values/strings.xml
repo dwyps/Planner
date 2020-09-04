@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Planner</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="introduction_text">We are going to start with a survey and according to your answers to our questions,
+        we are going to recommend activities and events we think you may like. On the next screen you choose categories
+        that interest you and we will offer you a set of questions regarding those categories. You will have the option
+        to delete activities and events you do not like or want to do and to add those you are interested in.
+        \n\nLet’s get started!</string>
+</resources>

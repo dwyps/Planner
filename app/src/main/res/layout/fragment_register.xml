@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.startup.register.RegisterFragment">
+
+    <ImageView
+        android:id="@+id/register_image_view_background"
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:src="@drawable/bc_login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/register_layout"
+        android:adjustViewBounds="true" />
+
+    <LinearLayout
+        android:id="@+id/register_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="26dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bc_login_form"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/register_image_view_background">
+
+        <TextView
+            android:id="@+id/register_text_view_form_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="25dp"
+            android:text="Register"
+            android:textColor="@color/colorPrimary"
+            android:textSize="35sp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <EditText
+            android:id="@+id/register_edit_text_name"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:inputType="textPersonName"
+            android:layout_marginEnd="25dp"
+            android:maxLength="20"
+            android:focusable = "true"
+            android:textColorHighlight = "@color/colorPrimary"
+            android:hint="Name"
+            android:textColor="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/register_edit_text_email"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:inputType="textEmailAddress"
+            android:layout_marginEnd="25dp"
+            android:focusable = "true"
+            android:textColorHighlight = "@color/colorPrimary"
+            android:hint="Email"
+            android:textColor="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/register_edit_text_password"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:focusable = "true"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:inputType="textPassword"
+            android:textColorHighlight = "@color/colorPrimary"
+            android:layout_marginEnd="25dp"
+            android:hint="Password"
+            android:textColor="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimary"/>
+
+        <EditText
+            android:id="@+id/register_edit_text_check_password"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:focusable = "true"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:inputType="textPassword"
+            android:textColorHighlight = "@color/colorPrimary"
+            android:layout_marginEnd="25dp"
+            android:hint="Confirm Password"
+            android:textColor="@color/colorPrimary"
+            android:backgroundTint="@color/colorPrimary"/>
+
+        <Button
+            android:id="@+id/register_btn_sign_up"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:background="@drawable/bc_button"
+            android:textColor="@color/colorPrimary"
+            android:text="REGISTER"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".ui.survey.categories.CategoriesFragment">
+
+    <ImageView
+        android:id="@+id/education_image_view_background"
+        android:layout_width="wrap_content"
+        android:layout_height="180dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/bc_education"/>
+
+    <TextView
+        android:id="@+id/education_text_view_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimary"
+        android:text="EDUCATION"
+        android:textSize="24sp"
+        android:layout_marginStart="16dp"/>
+
+    <Button
+        android:id="@+id/education_btn_answer1"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bc_categories_button"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
+        android:text="Humanities and social science"
+        android:textColor="@color/colorPrimary"/>
+
+    <Button
+        android:id="@+id/education_btn_answer2"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bc_categories_button"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="Natural sciences"
+        android:textColor="@color/colorPrimary"/>
+
+    <Button
+        android:id="@+id/education_btn_answer3"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bc_categories_button"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="Formal sciences"
+        android:textColor="@color/colorPrimary"/>
+
+    <Button
+        android:id="@+id/education_btn_answer4"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bc_categories_button"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="Professions and applied sciences"
+        android:textColor="@color/colorPrimary"/>
+
+</LinearLayout>
