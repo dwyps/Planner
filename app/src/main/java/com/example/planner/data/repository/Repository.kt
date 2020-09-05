@@ -1,8 +1,6 @@
 package com.example.planner.data.repository
 
-import android.graphics.Color
 import android.net.Uri
-import com.example.planner.R
 import com.example.planner.data.local.TasksDao
 import com.example.planner.data.model.*
 import com.example.planner.data.remote.TasksRemoteDataSource
@@ -15,8 +13,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -39,14 +39,17 @@ class Repository @Inject constructor(
     @ExperimentalCoroutinesApi
     fun firebaseSignIn(loginCredentials: LoginCredentials): Flow<Resource<Boolean>> = callbackFlow {
 
-        val subscription = firebaseAuth.signInWithEmailAndPassword(loginCredentials.email, loginCredentials.password)
+        val subscription = firebaseAuth.signInWithEmailAndPassword(
+            loginCredentials.email,
+            loginCredentials.password
+        )
 
         subscription.addOnCompleteListener {
 
             if (it.isSuccessful) {
 
                 val subscriber = getUsers().child(firebaseCurrentUser()?.uid!!)
-                subscriber.addListenerForSingleValueEvent( object : ValueEventListener {
+                subscriber.addListenerForSingleValueEvent(object : ValueEventListener {
 
                     override fun onDataChange(snapshot: DataSnapshot) {
 
@@ -60,7 +63,7 @@ class Repository @Inject constructor(
                     }
 
                     override fun onCancelled(error: DatabaseError) {
-                        offer{Resource.error(error.message, null)}
+                        offer { Resource.error(error.message, null) }
                     }
                 })
             } else {
@@ -75,10 +78,10 @@ class Repository @Inject constructor(
     @ExperimentalCoroutinesApi
     fun firebaseSignUp(registrationCredentials: RegistrationCredentials): Flow<Resource<User>> = callbackFlow {
 
-        val listener = firebaseAuth.createUserWithEmailAndPassword (
-                registrationCredentials.email,
-                registrationCredentials.password
-            ).addOnCompleteListener {
+        val listener = firebaseAuth.createUserWithEmailAndPassword(
+            registrationCredentials.email,
+            registrationCredentials.password
+        ).addOnCompleteListener {
 
                 if (it.isSuccessful) {
 
@@ -142,13 +145,17 @@ class Repository @Inject constructor(
 
         categories.forEach {
 
-            getUsers().child(firebaseCurrentUser()?.uid!!).child("profile").child("categories").child(it.toString()).setValue(-1)
+            getUsers().child(firebaseCurrentUser()?.uid!!).child("profile").child("categories").child(
+                it.toString()
+            ).setValue(-1)
         }
     }
 
     fun setAnswer(answer: Int, category: Int) {
 
-        getUsers().child(firebaseCurrentUser()?.uid!!).child("profile").child("categories").child(category.toString()).setValue(answer)
+        getUsers().child(firebaseCurrentUser()?.uid!!).child("profile").child("categories").child(
+            category.toString()
+        ).setValue(answer)
     }
 
     fun changeName(name: String) {
@@ -422,7 +429,7 @@ class Repository @Inject constructor(
     }
 
     @ExperimentalCoroutinesApi
-    fun checkDailyTasks()= callbackFlow<Resource<Boolean>> {
+    fun checkDailyTasks() = callbackFlow<Resource<Boolean>> {
 
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -435,7 +442,9 @@ class Repository @Inject constructor(
                     offer(Resource.success(false))
                 } else {
 
-                    getUsers().child(firebaseCurrentUser()?.uid!!).child("refresh").setValue(Calendar.getInstance().timeInMillis)
+                    getUsers().child(firebaseCurrentUser()?.uid!!).child("refresh").setValue(
+                        Calendar.getInstance().timeInMillis
+                    )
                     offer(Resource.success(true))
                 }
             }
@@ -494,8 +503,8 @@ class Repository @Inject constructor(
                                         true,
                                         dbAnswers.children.shuffled().first().value as String,
                                         "",
-                                        R.id.icon_iv,
-                                        Color.BLUE,
+                                        2131230873,
+                                        -16776961,
                                         Calendar.getInstance().timeInMillis,
                                         Calendar.getInstance().timeInMillis,
                                         true,
@@ -523,6 +532,63 @@ class Repository @Inject constructor(
 
         awaitClose { subscriber.removeEventListener(listener) }
     }
+
+    @ExperimentalCoroutinesApi
+    fun getCurrentDayTasks(date: Date) = callbackFlow<Resource<List<Task>>> {
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                val currentDayTasks = mutableListOf<Task>()
+
+                snapshot.children.forEach {
+
+                    val taskTime = it.child("dateFrom").value as Long
+
+                    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+
+                    val taskDate = formatter.format(taskTime)
+                    val selectedDate = formatter.format(date)
+
+                    if (it.key != "0" && taskDate == selectedDate) {
+
+                        val id = it.child("id").value as Long?
+                        val icon = it.child("icon").value as Long
+                        val color = it.child("color").value as Long
+                        val reminder = it.child("reminder").value as Long
+
+                        val task =  Task(
+                            id?.toInt(),
+                            it.child("type").value as Boolean,
+                            it.child("title").value as String,
+                            it.child("description").value as String,
+                            icon.toInt(),
+                            color.toInt(),
+                            it.child("dateFrom").value as Long,
+                            it.child("dateTo").value as Long,
+                            it.child("allDay").value as Boolean,
+                            reminder.toInt()
+                        )
+                        currentDayTasks.add(task)
+                    }
+                }
+
+                offer(Resource.success(currentDayTasks))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+                offer(Resource.error(error.message))
+            }
+        }
+
+        val subscriber = getUsers().child(firebaseCurrentUser()?.uid!!).child("tasks")
+        subscriber.addValueEventListener(listener)
+
+        awaitClose { subscriber.removeEventListener(listener) }
+    }
+
+
 
     private fun getUsers() = firebaseDatabase.reference.child("main").child("users")
     private fun getTasks() = firebaseDatabase.reference.child("main").child("tasks")

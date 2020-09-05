@@ -14,7 +14,6 @@
         <com.applandeo.materialcalendarview.CalendarView
             android:id="@+id/calendar_view"
             android:layout_width="match_parent"
-            app:eventsEnabled="true"
             android:layout_height="wrap_content"/>
 
         <TextView

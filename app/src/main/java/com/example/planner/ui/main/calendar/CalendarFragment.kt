@@ -1,22 +1,24 @@
 package com.example.planner.ui.main.calendar
 
-import android.app.AlertDialog
-import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.applandeo.materialcalendarview.EventDay
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener
 import com.example.planner.R
 import com.example.planner.data.model.Task
 import com.example.planner.ui.main.MainActivity
+import com.example.planner.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_calendar.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class CalendarFragment : Fragment(R.layout.fragment_calendar) {
@@ -24,6 +26,7 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar) {
     @Inject
     lateinit var calendarViewModel: CalendarViewModel
 
+    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -37,115 +40,85 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar) {
         (activity as MainActivity).ensureBottomNavigation()
     }
 
+    @ExperimentalCoroutinesApi
     private fun initViewModel() {
+
+        calendarViewModel.getAllTasks()
+
+
+        calendarViewModel.tasksLiveData.observe(viewLifecycleOwner, {
+
+            when (it.status) {
+
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility =
+                    View.VISIBLE
+
+                Resource.Status.SUCCESS -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+
+                    it.data?.let { tasks -> addEvents(tasks) }
+                }
+
+                Resource.Status.ERROR -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                }
+            }
+        })
+
+        calendarViewModel.currentDayTasksLiveData.observe(viewLifecycleOwner, {
+
+            when (it.status) {
+
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility =
+                    View.VISIBLE
+
+                Resource.Status.SUCCESS -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+
+                    if (it.data.isNullOrEmpty())
+                        calendar_tv_tasks.visibility = View.GONE
+                    else
+                        calendar_tv_tasks.visibility = View.VISIBLE
+
+                }
+
+                Resource.Status.ERROR -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                }
+            }
+        })
 
     }
 
+    @ExperimentalCoroutinesApi
     private fun initCalendar() {
-
-        addEvents()
 
         calendar_view.setOnDayClickListener(object : OnDayClickListener {
 
             override fun onDayClick(eventDay: EventDay) {
-                Timber.e("Event: %s", eventDay.calendar.time)
 
-//                calendarViewModel.getTasks(eventDay.calendar.time)
-                getTasks(eventDay.calendar.time)
+                calendarViewModel.getCurrentDayTasks(eventDay.calendar.time)
             }
         })
     }
 
-    private fun addEvents() {
-
-//        val tasks = calendarViewModel.getAllTasks()
-        val taskList = getAllTasks()
-        val calendar = Calendar.getInstance()
-
-        calendar.set(2020,8,3)
+    private fun addEvents(tasks: List<Task>) {
 
         val eventList = mutableListOf<EventDay>()
 
-        taskList.forEach {
+        tasks.forEach {
+
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = it.dateFrom
 
             eventList.add(EventDay(calendar, it.icon, it.color))
         }
 
         calendar_view.setEvents(eventList)
-    }
-
-    private fun getAllTasks(): List<Task> {
-
-        val taskList = mutableListOf<Task>()
-
-//        taskList.add(
-//            Task(
-//                1,
-//                true,
-//                "Clean House",
-//                "Clean Whole House",
-//                R.drawable.ic_birthday,
-//                Color.BLUE,
-//                Date(2020, 9, 3),
-//                true,
-//                1
-//            )
-//        )
-//
-//        taskList.add(
-//            Task(
-//                1,
-//                true,
-//                "Clean House",
-//                "Clean Whole House",
-//                R.drawable.ic_drink,
-//                Color.BLUE,
-//                Date(2020, 9, 3),
-//                true,
-//                1
-//            )
-//        )
-
-        return taskList
-    }
-
-    private fun getTasks(date: Date) {
-
-        val taskList = mutableListOf<Task>()
-
-//        taskList.add(
-//            Task(
-//                1,
-//                true,
-//                "Clean House",
-//                "Clean Whole House",
-//                R.drawable.ic_birthday,
-//                Color.BLUE,
-//                Date(2020, 9, 2),
-//                true,
-//                1
-//            )
-//        )
-//
-//        taskList.add(
-//            Task(
-//                1,
-//                true,
-//                "Clean House",
-//                "Clean Whole House",
-//                R.drawable.ic_drink,
-//                Color.BLUE,
-//                Date(2020, 9, 7),
-//                true,
-//                1
-//            )
-//        )
-//
-//        if (date == taskList[0].date)
-//            calendar_tv_tasks.visibility = View.VISIBLE
-//        else
-//            calendar_tv_tasks.visibility = View.GONE
-
     }
 
     private fun initListeners() {

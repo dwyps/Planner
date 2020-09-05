@@ -174,8 +174,6 @@ class TaskFormFragment : Fragment(R.layout.fragment_task_form),
                     repeat
                 )
 
-                Timber.e(task.toString())
-
                 taskFormViewModel.getTaskID(task)
             }
         }
