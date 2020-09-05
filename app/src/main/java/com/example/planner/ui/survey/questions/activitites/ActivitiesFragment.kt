@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.planner.R
 import com.example.planner.ui.survey.questions.QuestionsViewModel
 import com.example.planner.ui.survey.questions.education.EducationFragmentDirections
@@ -20,6 +21,8 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
     @Inject
     lateinit var questionsViewModel: QuestionsViewModel
 
+    private val args: ActivitiesFragmentArgs by navArgs()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -33,31 +36,41 @@ class ActivitiesFragment : Fragment(R.layout.fragment_activities) {
         activities_btn_answer1.setOnClickListener {
 
             questionsViewModel.setAnswer(0, category)
-            findNavController().navigate(ActivitiesFragmentDirections.actionActivitiesFragmentToEntertainmentFragment())
+            navigateNextQuestion()
         }
 
         activities_btn_answer2.setOnClickListener {
 
             questionsViewModel.setAnswer(1, category)
-            findNavController().navigate(ActivitiesFragmentDirections.actionActivitiesFragmentToEntertainmentFragment())
+            navigateNextQuestion()
         }
 
         activities_btn_answer3.setOnClickListener {
 
             questionsViewModel.setAnswer(2, category)
-            findNavController().navigate(ActivitiesFragmentDirections.actionActivitiesFragmentToEntertainmentFragment())
+            navigateNextQuestion()
         }
 
         activities_btn_answer4.setOnClickListener {
 
             questionsViewModel.setAnswer(3, category)
-            findNavController().navigate(ActivitiesFragmentDirections.actionActivitiesFragmentToEntertainmentFragment())
+            navigateNextQuestion()
         }
 
         activities_btn_answer5.setOnClickListener {
 
             questionsViewModel.setAnswer(4, category)
-            findNavController().navigate(ActivitiesFragmentDirections.actionActivitiesFragmentToEntertainmentFragment())
+            navigateNextQuestion()
+        }
+    }
+
+    private fun navigateNextQuestion() {
+
+        when(args.categories.contains(3)) {
+
+            true -> findNavController().navigate(ActivitiesFragmentDirections.actionActivitiesFragmentToEntertainmentFragment())
+
+            else -> findNavController().navigate(ActivitiesFragmentDirections.actionActivitiesFragmentToSummaryFragment())
         }
     }
 }

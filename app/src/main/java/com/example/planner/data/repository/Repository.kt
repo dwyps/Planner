@@ -1,11 +1,10 @@
 package com.example.planner.data.repository
 
+import android.graphics.Color
 import android.net.Uri
+import com.example.planner.R
 import com.example.planner.data.local.TasksDao
-import com.example.planner.data.model.LoginCredentials
-import com.example.planner.data.model.RegistrationCredentials
-import com.example.planner.data.model.Task
-import com.example.planner.data.model.User
+import com.example.planner.data.model.*
 import com.example.planner.data.remote.TasksRemoteDataSource
 import com.example.planner.util.Resource
 import com.google.firebase.auth.FirebaseAuth
@@ -198,6 +197,26 @@ class Repository @Inject constructor(
         awaitClose { listener?.addOnCompleteListener {} }
     }
 
+    @ExperimentalCoroutinesApi
+    fun checkSurveyStatus() = callbackFlow<Resource<Boolean>> {
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                offer(Resource.success(snapshot.value as Boolean))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                offer(Resource.error(error.message))
+            }
+        }
+
+        val subscriber = getUsers().child(firebaseCurrentUser()?.uid!!).child("survey")
+        subscriber.addListenerForSingleValueEvent(listener)
+
+        awaitClose { subscriber.removeEventListener(listener) }
+    }
+
     //Firebase Database
 
     @ExperimentalCoroutinesApi
@@ -272,9 +291,7 @@ class Repository @Inject constructor(
 
         tasks.forEach {
 
-            val time: Long = it.dateFrom - Calendar.getInstance().timeInMillis
-
-            Timber.e(time.toString())
+            val time: Long = it.dateFrom - Calendar.getInstance().timeInMillis + 86400002
 
             if (todayTasks.size < 7)
                 if (time in 0..86400002)
@@ -294,8 +311,6 @@ class Repository @Inject constructor(
 
             val time: Long = it.dateFrom - Calendar.getInstance().timeInMillis
 
-            Timber.e(time.toString())
-
             if (weekTasks.size < 7)
                 if (time in 0..604800000)
                     weekTasks.add(it)
@@ -314,8 +329,6 @@ class Repository @Inject constructor(
 
             val time: Long = it.dateFrom - Calendar.getInstance().timeInMillis
 
-            Timber.e(time.toString())
-
             if (monthTasks.size < 7)
                 if (time in 0..2592000000)
                     monthTasks.add(it)
@@ -333,8 +346,6 @@ class Repository @Inject constructor(
                 val allTasks = mutableListOf<Task>()
 
                 snapshot.children.forEach {
-
-                    Timber.e(it.value.toString())
 
                     if (it.key != "0") {
 
@@ -370,6 +381,144 @@ class Repository @Inject constructor(
         }
 
         val subscriber = getUsers().child(firebaseCurrentUser()?.uid!!).child("tasks")
+        subscriber.addValueEventListener(listener)
+
+        awaitClose { subscriber.removeEventListener(listener) }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getSurveyProfile() = callbackFlow<Resource<Profile>> {
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                val categories = mutableListOf<Int>()
+                val answers = mutableListOf<Int>()
+
+                snapshot.child("categories").children.forEach {
+
+                    val category = it.key
+                    val answer = it.value as Long
+
+                    if (category != null) {
+                        categories.add(category.toInt())
+                        answers.add(answer.toInt())
+                    }
+                }
+
+                offer(Resource.success(Profile(categories, answers)))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+                offer(Resource.error(error.message))
+            }
+        }
+
+        val subscriber = getUsers().child(firebaseCurrentUser()?.uid!!).child("profile")
+        subscriber.addValueEventListener(listener)
+
+        awaitClose { subscriber.removeEventListener(listener) }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun checkDailyTasks()= callbackFlow<Resource<Boolean>> {
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                val lastRefresh = snapshot.value as Long
+                val day = Calendar.getInstance().timeInMillis - lastRefresh
+
+                if (day in 0..86400002) {
+
+                    offer(Resource.success(false))
+                } else {
+
+                    getUsers().child(firebaseCurrentUser()?.uid!!).child("refresh").setValue(Calendar.getInstance().timeInMillis)
+                    offer(Resource.success(true))
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+                offer(Resource.error(error.message))
+            }
+        }
+
+        val subscriber = getUsers().child(firebaseCurrentUser()?.uid!!).child("refresh")
+        subscriber.addValueEventListener(listener)
+
+        awaitClose { subscriber.removeEventListener(listener) }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun addDailyTask(task: Task) = callbackFlow<Resource<Boolean>>{
+
+        val listener =
+            getUsers()
+                .child(firebaseCurrentUser()?.uid!!)
+                .child("tasks")
+                .child(task.id.toString().trim())
+                .setValue(task)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        offer(Resource(Resource.Status.SUCCESS, null, null))
+                    } else {
+                        offer(Resource(Resource.Status.ERROR, null, null))
+                    }
+                }
+        awaitClose { listener.addOnCompleteListener {} }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getDailyTasks(profile: Profile) = callbackFlow<Resource<List<Task>>> {
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                val allDailyTasks = mutableListOf<Task>()
+
+                profile.categories.forEachIndexed { index, category ->
+
+                    snapshot.children.forEach { dbCategory ->
+
+                        if (category == dbCategory.key?.toInt()) {
+
+                            dbCategory.children.forEach { dbAnswers ->
+
+                                if (dbAnswers.key?.toInt() == profile.answers[index]) {
+
+                                    val task =  Task(
+                                        null,
+                                        true,
+                                        dbAnswers.children.shuffled().first().value as String,
+                                        "",
+                                        R.id.icon_iv,
+                                        Color.BLUE,
+                                        Calendar.getInstance().timeInMillis,
+                                        Calendar.getInstance().timeInMillis,
+                                        true,
+                                        1
+                                    )
+
+                                    allDailyTasks.add(task)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                offer(Resource.success(allDailyTasks))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+                offer(Resource.error(error.message))
+            }
+        }
+
+        val subscriber = getTasks()
         subscriber.addValueEventListener(listener)
 
         awaitClose { subscriber.removeEventListener(listener) }

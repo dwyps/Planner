@@ -32,32 +32,36 @@ class EntertainmentFragment : Fragment(R.layout.fragment_entertainment) {
         entertainment_btn_answer1.setOnClickListener {
 
             questionsViewModel.setAnswer(0, category)
-            findNavController().navigate(EntertainmentFragmentDirections.actionEntertainmentFragmentToSummaryFragment())
+            navigateToSummary()
         }
 
         entertainment_btn_answer2.setOnClickListener {
 
             questionsViewModel.setAnswer(1, category)
-            findNavController().navigate(EntertainmentFragmentDirections.actionEntertainmentFragmentToSummaryFragment())
+            navigateToSummary()
         }
 
         entertainment_btn_answer3.setOnClickListener {
 
             questionsViewModel.setAnswer(2, category)
-            findNavController().navigate(EntertainmentFragmentDirections.actionEntertainmentFragmentToSummaryFragment())
+            navigateToSummary()
         }
 
         entertainment_btn_answer4.setOnClickListener {
 
             questionsViewModel.setAnswer(3, category)
-            findNavController().navigate(EntertainmentFragmentDirections.actionEntertainmentFragmentToSummaryFragment())
+            navigateToSummary()
         }
 
         entertainment_btn_answer5.setOnClickListener {
 
             questionsViewModel.setAnswer(4, category)
-            findNavController().navigate(EntertainmentFragmentDirections.actionEntertainmentFragmentToSummaryFragment())
+            navigateToSummary()
         }
+    }
+
+    private fun navigateToSummary() {
+        findNavController().navigate(EntertainmentFragmentDirections.actionEntertainmentFragmentToSummaryFragment())
     }
 
 }

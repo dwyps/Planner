@@ -3,6 +3,7 @@ package com.example.planner.ui.survey.categories
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.planner.R
 import com.example.planner.data.model.Profile
@@ -42,13 +43,16 @@ class CategoriesFragment : Fragment(R.layout.fragment_categories) {
 
             categoriesViewModel.setCategories(categories)
 
-            when(categories.first()) {
+            if (categories.isEmpty())
+                Toast.makeText(requireContext(), "You have to select at least one category.", Toast.LENGTH_SHORT).show()
+            else
+                when(categories.first()) {
 
-                0 -> findNavController().navigate(CategoriesFragmentDirections.actionCategoriesFragmentToSelfCareFragment())
-                1 -> findNavController().navigate(CategoriesFragmentDirections.actionCategoriesFragmentToEducationFragment())
-                2 -> findNavController().navigate(CategoriesFragmentDirections.actionCategoriesFragmentToActivitiesFragment())
-                3 -> findNavController().navigate(CategoriesFragmentDirections.actionCategoriesFragmentToEntertainmentFragment())
-            }
+                    0 -> findNavController().navigate(CategoriesFragmentDirections.actionCategoriesFragmentToSelfCareFragment(categories.toIntArray()))
+                    1 -> findNavController().navigate(CategoriesFragmentDirections.actionCategoriesFragmentToEducationFragment(categories.toIntArray()))
+                    2 -> findNavController().navigate(CategoriesFragmentDirections.actionCategoriesFragmentToActivitiesFragment(categories.toIntArray()))
+                    3 -> findNavController().navigate(CategoriesFragmentDirections.actionCategoriesFragmentToEntertainmentFragment())
+                }
         }
     }
 }

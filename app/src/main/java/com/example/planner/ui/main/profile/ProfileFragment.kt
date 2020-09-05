@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.planner.R
+import com.example.planner.data.model.Profile
 import com.example.planner.data.model.Task
 import com.example.planner.ui.main.MainActivity
 import com.example.planner.ui.main.calendar.CalendarFragmentDirections
@@ -24,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,6 +39,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
     private lateinit var recyclerViewTasksAdapter: ProfileTasksRecyclerAdapter
     private lateinit var recyclerViewToDoAdapter: ProfileToDoListRecyclerAdapter
 
+    private val dailyTasks = mutableListOf<Task>()
+
+    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -63,10 +68,83 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
 
     }
 
+    @ExperimentalCoroutinesApi
     private fun initViewModel() {
 
+        profileViewModel.checkSurveyStatus()
         profileViewModel.getUserName()
         profileViewModel.getPicture()
+        profileViewModel.getAllTasks()
+
+        profileViewModel.userSurveyLiveData.observe(viewLifecycleOwner, {
+
+            when (it.status) {
+
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility = View.VISIBLE
+
+                Resource.Status.SUCCESS -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+
+                    it.data?.let { state -> updateUI(state) }
+                }
+
+                Resource.Status.ERROR -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
+
+        profileViewModel.surveyProfileLiveData.observe(viewLifecycleOwner, {
+
+            when (it.status) {
+
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility = View.VISIBLE
+
+                Resource.Status.SUCCESS -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+
+                    if (it.data != null)
+                        profileViewModel.getDailyTasks(it.data)
+
+                }
+
+                Resource.Status.ERROR -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
+        profileViewModel.refreshDailyTaskLiveData.observe(viewLifecycleOwner, {
+
+            when (it.status) {
+
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility = View.VISIBLE
+
+                Resource.Status.SUCCESS -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+
+                    it.data?.let { state ->
+
+                        if (state)
+                            profileViewModel.getSurveyProfile()
+                    }
+                }
+
+                Resource.Status.ERROR -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
 
         profileViewModel.userNameLiveData.observe(viewLifecycleOwner, {
 
@@ -82,8 +160,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
 
             when (it.status) {
 
-                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility =
-                    View.VISIBLE
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility = View.VISIBLE
 
                 Resource.Status.SUCCESS -> {
 
@@ -101,6 +178,124 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
             }
 
         })
+
+        profileViewModel.tasksLiveData.observe(viewLifecycleOwner, {
+
+            when (it.status) {
+
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility = View.VISIBLE
+
+                Resource.Status.SUCCESS -> {
+
+                    val dailyTasks = mutableListOf<Task>()
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+
+                    it.data?.forEach{ dailyTask ->
+
+                        if (dailyTask.reminder == 1 && dailyTask.allDay)
+                            dailyTasks.add(dailyTask)
+                    }
+
+                    recyclerViewTasksAdapter.submitList(dailyTasks)
+                    recyclerViewTasksAdapter.notifyDataSetChanged()
+
+                    recyclerViewToDoAdapter.submitList(it.data)
+                    recyclerViewToDoAdapter.notifyDataSetChanged()
+                }
+
+                Resource.Status.ERROR -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
+
+        profileViewModel.dailyTasksLiveData.observe(viewLifecycleOwner, {
+
+            when (it.status) {
+
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility = View.VISIBLE
+
+                Resource.Status.SUCCESS -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+
+                    it.data?.forEach { task ->
+
+                        dailyTasks.add(task)
+                    }
+
+                    it.data?.first()?.let { task ->
+
+                        profileViewModel.getTaskID(task)
+                    }
+                }
+
+                Resource.Status.ERROR -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
+        profileViewModel.taskIDLiveData.observe(viewLifecycleOwner, {
+
+            when (it.status) {
+
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility = View.VISIBLE
+
+                Resource.Status.SUCCESS -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+
+                    dailyTasks[0].id = it.data?.id
+
+                    dailyTasks.forEachIndexed { index, task ->
+
+                        if (index != 0)
+                            if (task.id == null)
+                                task.id = dailyTasks[0].id?.plus(index)
+                    }
+
+                    dailyTasks.forEach { task ->
+
+                        profileViewModel.addDailyTask(task)
+                    }
+                }
+
+                Resource.Status.ERROR -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
+
+        profileViewModel.dailyTaskLiveData.observe(viewLifecycleOwner, {
+
+            when (it.status) {
+
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility = View.VISIBLE
+
+                Resource.Status.SUCCESS -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                    profileViewModel.getAllTasks()
+                }
+
+                Resource.Status.ERROR -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+
     }
 
     private fun initListeners() {
@@ -156,6 +351,22 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
         recyclerViewToDoAdapter = ProfileToDoListRecyclerAdapter(this)
 
         profile_recycler_view_to_do_list.adapter = recyclerViewToDoAdapter
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun updateUI(state: Boolean) {
+
+        if (state) {
+
+            profile_tv_daily_duties.visibility = View.VISIBLE
+            profile_recycler_view_tasks.visibility = View.VISIBLE
+            profileViewModel.checkDailyTasks()
+
+        } else {
+
+            profile_tv_daily_duties.visibility = View.GONE
+            profile_recycler_view_tasks.visibility = View.GONE
+        }
     }
 
     override fun onItemTaskClick(position: Int, task: Task) {}
