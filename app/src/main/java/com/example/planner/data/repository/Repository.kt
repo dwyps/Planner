@@ -346,6 +346,55 @@ class Repository @Inject constructor(
     }
 
     @ExperimentalCoroutinesApi
+    fun getTaskByID(id: Int) = callbackFlow<Resource<Task>> {
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                snapshot.children.forEach {
+
+                    if (it.key != "0") {
+
+                        val dbID = it.child("id").value as Long
+
+                        if (dbID.toInt() == id) {
+
+                            val color = it.child("color").value as Long
+                            val reminder = it.child("reminder").value as Long
+                            val icon = it.child("icon").value as Long
+
+                            val task =  Task(
+                                id,
+                                it.child("type").value as Boolean,
+                                it.child("title").value as String,
+                                it.child("description").value as String,
+                                icon.toInt(),
+                                color.toInt(),
+                                it.child("dateFrom").value as Long,
+                                it.child("dateTo").value as Long,
+                                it.child("allDay").value as Boolean,
+                                reminder.toInt()
+                            )
+
+                            offer(Resource.success(task))
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+                offer(Resource.error(error.message))
+            }
+        }
+
+        val subscriber = getUsers().child(firebaseCurrentUser()?.uid!!).child("tasks")
+        subscriber.addValueEventListener(listener)
+
+        awaitClose { subscriber.removeEventListener(listener) }
+    }
+
+    @ExperimentalCoroutinesApi
     fun getAllTasks() = callbackFlow<Resource<List<Task>>> {
 
         val listener = object : ValueEventListener {
@@ -378,6 +427,8 @@ class Repository @Inject constructor(
                         allTasks.add(task)
                     }
                 }
+
+                allTasks.sortBy { it.dateFrom }
 
                 offer(Resource.success(allTasks))
             }

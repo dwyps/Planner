@@ -21,6 +21,9 @@ class TaskFormViewModel @Inject constructor(
     private val _addTaskLiveData = MutableLiveData<Resource<Task>>()
     val addTaskLiveData: LiveData<Resource<Task>> = _addTaskLiveData
 
+    private val _getTaskLiveData = MutableLiveData<Resource<Task>>()
+    val getTaskLiveData: LiveData<Resource<Task>> = _getTaskLiveData
+
     @ExperimentalCoroutinesApi
     fun addTask(task: Task) {
 
@@ -30,6 +33,18 @@ class TaskFormViewModel @Inject constructor(
                 .onStart { _addTaskLiveData.value = Resource.loading() }
                 .catch { _addTaskLiveData.value = Resource.error(it.localizedMessage) }
                 .collect { _addTaskLiveData.value = it }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getTask(id: Int) {
+
+        viewModelScope.launch {
+
+            repository.getTaskByID(id)
+                .onStart { _getTaskLiveData.value = Resource.loading() }
+                .catch { _getTaskLiveData.value = Resource.error(it.localizedMessage) }
+                .collect { _getTaskLiveData.value = it }
         }
     }
 

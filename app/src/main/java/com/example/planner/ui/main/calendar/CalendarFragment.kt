@@ -11,6 +11,7 @@ import com.example.planner.data.model.Task
 import com.example.planner.ui.main.MainActivity
 import com.example.planner.ui.main.profile.adapter.ProfileTasksRecyclerAdapter
 import com.example.planner.ui.main.profile.adapter.ProfileToDoListRecyclerAdapter
+import com.example.planner.ui.main.tasks.TasksFragmentDirections
 import com.example.planner.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -110,7 +111,7 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar),
     @ExperimentalCoroutinesApi
     private fun initCalendar() {
 
-        calendar_view.setOnDayClickListener(object : OnDayClickListener {
+        calendar_view.setOnDayClickListener( object : OnDayClickListener {
 
             override fun onDayClick(eventDay: EventDay) {
 
@@ -148,5 +149,8 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar),
         calendar_recycler_view_to_do_list.adapter = recyclerViewToDoListAdapter
     }
 
-    override fun onItemToDoClick(position: Int, task: Task) {}
+    override fun onItemToDoClick(position: Int, task: Task) {
+
+        findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToTaskForm(task.id!!))
+    }
 }

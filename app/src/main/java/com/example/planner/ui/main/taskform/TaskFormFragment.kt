@@ -1,12 +1,14 @@
 package com.example.planner.ui.main.taskform
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.DatePicker
 import com.applandeo.materialcalendarview.builders.DatePickerBuilder
@@ -36,6 +38,10 @@ class TaskFormFragment : Fragment(R.layout.fragment_task_form),
     @Inject
     lateinit var taskFormViewModel: TaskFormViewModel
 
+    private val args: TaskFormFragmentArgs by navArgs()
+
+    private lateinit var editedTask: Task
+
     private lateinit var icons : List<Int>
     private lateinit var colors : List<Int>
 
@@ -58,7 +64,6 @@ class TaskFormFragment : Fragment(R.layout.fragment_task_form),
     private fun initViewModel() {
 
         taskFormViewModel.addTaskLiveData.observe(viewLifecycleOwner, {
-
 
             when (it.status) {
 
@@ -84,6 +89,29 @@ class TaskFormFragment : Fragment(R.layout.fragment_task_form),
                 }
             }
         })
+
+        taskFormViewModel.getTaskLiveData.observe(viewLifecycleOwner, {
+
+            when (it.status) {
+
+                Resource.Status.LOADING -> requireActivity().activity_main_spinner.visibility =
+                    View.VISIBLE
+
+                Resource.Status.SUCCESS -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+
+                    if (it.data != null)
+                        updateUI(it.data)
+                }
+
+                Resource.Status.ERROR -> {
+
+                    requireActivity().activity_main_spinner.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
     }
     @ExperimentalCoroutinesApi
     private fun initListeners() {
@@ -92,14 +120,44 @@ class TaskFormFragment : Fragment(R.layout.fragment_task_form),
         initButtons()
     }
 
+    @ExperimentalCoroutinesApi
     private fun initUI() {
 
-        val c = Calendar.getInstance().time
+        if (args.taskID != 0) {
+
+            taskFormViewModel.getTask(args.taskID)
+
+        } else {
+
+            val c = Calendar.getInstance().time
+            val df = SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault())
+            val formattedDate: String = df.format(c)
+
+            task_form_text_view_date.text = formattedDate
+        }
+    }
+
+    private fun updateUI(task: Task) {
+
         val df = SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault())
-        val formattedDate: String = df.format(c)
+        val formattedDate: String = df.format(task.dateFrom)
 
-        task_form_edit_text_date.text = formattedDate
+        task_form_edit_text_title.text = SpannableStringBuilder(task.title)
+        task_form_edit_text_description.text = SpannableStringBuilder(task.description)
 
+        icon = task.icon
+        color = task.color
+        task_form_btn_icon.setImageResource(icon)
+        task_form_btn_color.setImageResource(color)
+
+        dateFrom = task.dateFrom
+        dateTo = task.dateTo
+        task_form_text_view_date.text = formattedDate
+
+        task_form_switch.isChecked = task.allDay
+        task_form_spinner_repeat_options.setSelection(task.reminder)
+
+        editedTask = task
     }
 
     private fun initSpinners() {
@@ -146,7 +204,7 @@ class TaskFormFragment : Fragment(R.layout.fragment_task_form),
             showColorPickerDialog()
         }
 
-        task_form_edit_text_date.setOnClickListener {
+        task_form_text_view_date.setOnClickListener {
 
             showDatePickerDialog()
         }
@@ -156,25 +214,44 @@ class TaskFormFragment : Fragment(R.layout.fragment_task_form),
             val title = task_form_edit_text_title.text.toString()
             val description = task_form_edit_text_description.text.toString()
 
-            if (title.isEmpty()) {
+            when {
 
-                Toast.makeText(requireContext(), "Title can't be empty!", Toast.LENGTH_SHORT).show()
-            } else {
+                title.isEmpty() -> {
 
-                val task = Task(
-                    null,
-                    false,
-                    title,
-                    description,
-                    icon,
-                    color,
-                    dateFrom,
-                    dateTo,
-                    task_form_switch.isChecked,
-                    repeat
-                )
+                    Toast.makeText(requireContext(), "Title can't be empty!", Toast.LENGTH_SHORT).show()
+                }
 
-                taskFormViewModel.getTaskID(task)
+                args.taskID != 0 -> {
+
+                    editedTask.title = title
+                    editedTask.description = description
+                    editedTask.color = color
+                    editedTask.icon = icon
+                    editedTask.dateFrom = dateFrom
+                    editedTask.dateTo = dateTo
+                    editedTask.allDay = task_form_switch.isChecked
+                    editedTask.reminder = repeat
+
+                    taskFormViewModel.addTask(editedTask)
+                }
+
+                else -> {
+
+                    val task = Task(
+                        null,
+                        false,
+                        title,
+                        description,
+                        icon,
+                        color,
+                        dateFrom,
+                        dateTo,
+                        task_form_switch.isChecked,
+                        repeat
+                    )
+
+                    taskFormViewModel.getTaskID(task)
+                }
             }
         }
     }
@@ -240,6 +317,6 @@ class TaskFormFragment : Fragment(R.layout.fragment_task_form),
         val df = SimpleDateFormat("dd/MMM/yyyy", Locale.getDefault())
         val formattedDate: String = df.format(c)
 
-        task_form_edit_text_date.text = formattedDate
+        task_form_text_view_date.text = formattedDate
     }
 }

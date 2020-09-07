@@ -101,8 +101,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
                     requireActivity().activity_main_spinner.visibility = View.GONE
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-
-                    showChangeNameDialog()
                 }
             }
 

@@ -19,6 +19,7 @@ import com.example.planner.ui.main.MainActivity
 import com.example.planner.ui.main.calendar.CalendarFragmentDirections
 import com.example.planner.ui.main.profile.adapter.ProfileTasksRecyclerAdapter
 import com.example.planner.ui.main.profile.adapter.ProfileToDoListRecyclerAdapter
+import com.example.planner.ui.main.tasks.TasksFragmentDirections
 import com.example.planner.util.Constants.Companion.RESULT_LOAD_IMAGE
 import com.example.planner.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -368,6 +369,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
         }
     }
 
-    override fun onItemTaskClick(position: Int, task: Task) {}
-    override fun onItemToDoClick(position: Int, task: Task) {}
+    override fun onItemTaskClick(position: Int, task: Task) {
+
+        findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToTaskForm(task.id!!))
+    }
+
+    override fun onItemToDoClick(position: Int, task: Task) {
+
+        findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToTaskForm(task.id!!))
+    }
 }

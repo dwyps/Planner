@@ -98,7 +98,7 @@
         android:layout_marginTop="16dp"/>
 
     <TextView
-        android:id="@+id/task_form_edit_text_date"
+        android:id="@+id/task_form_text_view_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -124,8 +124,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/task_form_edit_text_date"
-        app:layout_constraintTop_toBottomOf="@+id/task_form_edit_text_date" />
+        app:layout_constraintEnd_toEndOf="@+id/task_form_text_view_date"
+        app:layout_constraintTop_toBottomOf="@+id/task_form_text_view_date" />
 
     <Button
         android:id="@+id/task_form_btn_save"

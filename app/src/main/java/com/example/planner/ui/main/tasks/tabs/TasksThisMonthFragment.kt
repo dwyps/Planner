@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.planner.R
 import com.example.planner.data.model.Task
+import com.example.planner.ui.main.tasks.TasksFragmentDirections
 import com.example.planner.ui.main.tasks.TasksViewModel
 import com.example.planner.ui.main.tasks.adapter.TasksTaskRecyclerAdapter
 import com.example.planner.util.Resource
@@ -74,5 +76,8 @@ class TasksThisMonthFragment : Fragment(R.layout.tasks_recycler_view_fragment), 
         })
     }
 
-    override fun onItemClick(position: Int, task: Task) {}
+    override fun onItemClick(position: Int, task: Task) {
+
+        findNavController().navigate(TasksFragmentDirections.actionTasksFragmentToTaskForm(task.id!!))
+    }
 }
