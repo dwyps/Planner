@@ -9,10 +9,13 @@ import com.applandeo.materialcalendarview.listeners.OnDayClickListener
 import com.example.planner.R
 import com.example.planner.data.model.Task
 import com.example.planner.ui.main.MainActivity
+import com.example.planner.ui.main.profile.adapter.ProfileTasksRecyclerAdapter
+import com.example.planner.ui.main.profile.adapter.ProfileToDoListRecyclerAdapter
 import com.example.planner.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_calendar.*
+import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -21,10 +24,13 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
-class CalendarFragment : Fragment(R.layout.fragment_calendar) {
+class CalendarFragment : Fragment(R.layout.fragment_calendar),
+    ProfileToDoListRecyclerAdapter.OnItemListener {
 
     @Inject
     lateinit var calendarViewModel: CalendarViewModel
+
+    private lateinit var recyclerViewToDoListAdapter: ProfileToDoListRecyclerAdapter
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,6 +39,7 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar) {
         initViewModel()
         initListeners()
         initCalendar()
+        initRecyclerView()
     }
 
     override fun onResume() {
@@ -78,10 +85,16 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar) {
 
                     requireActivity().activity_main_spinner.visibility = View.GONE
 
-                    if (it.data.isNullOrEmpty())
-                        calendar_tv_tasks.visibility = View.GONE
-                    else
-                        calendar_tv_tasks.visibility = View.VISIBLE
+                    if (it.data.isNullOrEmpty()) {
+
+                        recyclerViewToDoListAdapter.submitList(it.data)
+                        recyclerViewToDoListAdapter.notifyDataSetChanged()
+
+                    } else {
+
+                        recyclerViewToDoListAdapter.submitList(it.data)
+                        recyclerViewToDoListAdapter.notifyDataSetChanged()
+                    }
 
                 }
 
@@ -128,4 +141,12 @@ class CalendarFragment : Fragment(R.layout.fragment_calendar) {
             findNavController().navigate(CalendarFragmentDirections.actionCalendarFragmentToTaskForm())
         }
     }
+
+    private fun initRecyclerView() {
+        recyclerViewToDoListAdapter = ProfileToDoListRecyclerAdapter(this)
+
+        calendar_recycler_view_to_do_list.adapter = recyclerViewToDoListAdapter
+    }
+
+    override fun onItemToDoClick(position: Int, task: Task) {}
 }

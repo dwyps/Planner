@@ -83,7 +83,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Daily duties"
                 android:textColor="@color/colorPrimary"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profile_header_layout" />
 
@@ -109,7 +109,7 @@
                 android:layout_marginTop="24dp"
                 android:text="To-Do List"
                 android:textColor="@color/colorPrimary"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profile_recycler_view_tasks" />
 

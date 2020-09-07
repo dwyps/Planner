@@ -47,4 +47,6 @@ class TasksViewModel @Inject constructor(
 
         return repository.getThisMonthTasks(tasks)
     }
+
+    fun getEvents() = repository.getEvents()
 }

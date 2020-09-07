@@ -7,15 +7,14 @@
     <data>
 
         <variable
-            name="taskListItem"
-            type="com.example.planner.data.model.Task" />
-
+            name="eventItem"
+            type="com.example.planner.data.model.Event" />
     </data>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/item_task_list_card_layout"
-        android:layout_width="350dp"
-        android:layout_height="80dp"
+        android:id="@+id/item_event_card_layout"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
         android:layout_margin="10dp"
         android:backgroundTint="@color/colorTaskBackground"
         app:cardCornerRadius="10dp"
@@ -26,47 +25,42 @@
         android:layout_marginBottom="30dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/item_task_list_iv_photo"
-                android:clickable="false"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                app:bindThumbnail="@{taskListItem}"
-                tools:src="@drawable/ic_call"
-                android:adjustViewBounds="true"/>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="center">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/item_task_list_tv_name"
+                android:id="@+id/item_event_tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                tools:text="Sister"
-                android:text="@{taskListItem.title}"
+                tools:text="Title"
+                android:text="@{eventItem.title}"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:id="@+id/item_event_tv_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                tools:text="Location"
+                android:text="@{eventItem.location}"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"/>
 
             <TextView
-                android:id="@+id/item_task_list_tv_date"
+                android:id="@+id/item_event_tv_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:textSize="12sp"
+                tools:text="Description"
+                android:text="@{eventItem.description}"
                 android:textColor="@color/colorPrimary"
-                app:bindTaskDate="@{taskListItem.dateFrom}"
-                tools:text="09/02/2020 13:00" />
-            </LinearLayout>
+                android:textSize="16sp"
+                android:layout_marginTop="10dp"/>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

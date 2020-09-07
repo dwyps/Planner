@@ -49,7 +49,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 Resource.Status.SUCCESS -> {
 
                     requireActivity().activity_login_spinner.visibility = View.GONE
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
 
                     if (loginViewModel.currentUser() != null)
                         successfulSignIn(it.data!!)

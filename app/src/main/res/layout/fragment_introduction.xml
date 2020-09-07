@@ -36,8 +36,9 @@
         android:justificationMode="inter_word" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:orientation="horizontal"
         android:layout_marginTop="60dp">
 
@@ -46,20 +47,20 @@
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:text="Continue"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center"
             android:background="@drawable/bc_button"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:layout_marginStart="45dp"/>
+            android:layout_marginEnd="10dp"
+            android:foreground="?attr/selectableItemBackgroundBorderless" />
 
         <Button
             android:id="@+id/introduction_btn_skip"
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:text="Skip"
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
             android:background="@drawable/bc_button"
-            android:foreground="?attr/selectableItemBackgroundBorderless"
-            android:layout_marginStart="24dp"/>
+            android:foreground="?attr/selectableItemBackgroundBorderless" />
 
     </LinearLayout>
 

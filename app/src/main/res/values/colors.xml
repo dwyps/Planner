@@ -3,4 +3,5 @@
     <color name="colorPrimary">#1F375B</color>
     <color name="colorSecondary">#4D4F9BE0</color>
     <color name="colorTaskBackground">#33BAC5F4</color>
+    <color name="white">#FFFFFF</color>
 </resources>

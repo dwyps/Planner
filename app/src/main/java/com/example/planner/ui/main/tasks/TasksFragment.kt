@@ -8,6 +8,7 @@ import com.example.planner.R
 import com.example.planner.data.model.Task
 import com.example.planner.ui.main.MainActivity
 import com.example.planner.ui.main.calendar.CalendarFragmentDirections
+import com.example.planner.ui.main.tasks.adapter.TasksEventRecyclerAdapter
 import com.example.planner.ui.main.tasks.adapter.TasksTaskRecyclerAdapter
 import com.example.planner.ui.main.tasks.adapter.TasksViewPagerAdapter
 import com.example.planner.util.Resource
@@ -26,6 +27,7 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksTaskRecyclerAdapte
     lateinit var tasksViewModel: TasksViewModel
 
     private lateinit var viewPagerAdapter: TasksViewPagerAdapter
+    private lateinit var tasksEventRecyclerAdapter: TasksEventRecyclerAdapter
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -101,6 +103,14 @@ class TasksFragment : Fragment(R.layout.fragment_tasks), TasksTaskRecyclerAdapte
 
     }
 
-    private fun initRecyclerView() {}
+    private fun initRecyclerView() {
+
+        tasksEventRecyclerAdapter = TasksEventRecyclerAdapter()
+        tasksEventRecyclerAdapter.submitList(tasksViewModel.getEvents())
+        tasksEventRecyclerAdapter.notifyDataSetChanged()
+
+        events_recycler_view.adapter = tasksEventRecyclerAdapter
+    }
+
     override fun onItemClick(position: Int, task: Task) {}
 }

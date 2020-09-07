@@ -1,17 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/introduction_image_view_background"
+        android:layout_width="300dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/bc_hobbies"/>
+
+    <TextView
+        android:id="@+id/education_text_view_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimary"
+        android:text="HOBBIES"
+        android:textSize="24sp"
+        android:layout_marginStart="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimary"
+        android:text="Would you like to start any of these hobbies?"
+        android:textSize="18sp"
+        android:layout_marginStart="16dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp">
+
+        <Button
+            android:id="@+id/categories_btn_jogging"
+            android:layout_width="270dp"
+            android:layout_height="50dp"
+            android:background="@drawable/bc_categories_button"
+            android:text="Jogging"
+            android:layout_gravity="start"
+            android:textColor="@color/colorPrimary"/>
+
+        <CheckBox
+            android:id="@+id/categories_checkbox_jogging"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="end"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/categories_btn_playing_an_instrument"
+            android:layout_width="270dp"
+            android:layout_height="50dp"
+            android:background="@drawable/bc_categories_button"
+            android:text="Playing an instrument"
+            android:layout_gravity="start"
+            android:textColor="@color/colorPrimary"/>
+
+        <CheckBox
+            android:id="@+id/categories_checkbox_playing_an_instrument"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="end"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/categories_btn_drawing_or_painting"
+            android:layout_width="270dp"
+            android:layout_height="50dp"
+            android:background="@drawable/bc_categories_button"
+            android:text="Drawing or painting"
+            android:layout_gravity="start"
+            android:textColor="@color/colorPrimary"/>
+
+        <CheckBox
+            android:id="@+id/categories_checkbox_drawing_or_painting"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="end"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/categories_btn_video_games"
+            android:layout_width="270dp"
+            android:layout_height="50dp"
+            android:background="@drawable/bc_categories_button"
+            android:text="Video games"
+            android:layout_gravity="start"
+            android:textColor="@color/colorPrimary"/>
+
+        <CheckBox
+            android:id="@+id/categories_checkbox_video_games"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="end"/>
+    </LinearLayout>
 
     <Button
         android:id="@+id/hobbies_btn_next"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next"/>
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="Next"
+        android:background="@drawable/bc_button"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="35dp"
+        android:textColor="@color/colorPrimary"/>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

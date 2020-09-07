@@ -165,7 +165,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile),
                 Resource.Status.SUCCESS -> {
 
                     requireActivity().activity_main_spinner.visibility = View.GONE
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
 
                     profileViewModel.getPicture()
                 }

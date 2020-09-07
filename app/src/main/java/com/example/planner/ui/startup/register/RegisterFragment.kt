@@ -41,7 +41,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 Resource.Status.SUCCESS -> {
 
                     requireActivity().activity_login_spinner.visibility = View.GONE
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
 
                     findNavController().popBackStack()
                 }

@@ -89,7 +89,8 @@ class Repository @Inject constructor(
                     if (firebaseUser != null) {
 
                         getUsers().child(firebaseUser.uid).child("first_time").setValue(true)
-                        getUsers().child(firebaseUser.uid).child("tasks").setValue("0")
+                        getUsers().child(firebaseUser.uid).child("tasks").child("0").child("id").setValue(0)
+                        getUsers().child(firebaseUser.uid).child("refresh").setValue(0L)
 
                         val updateUserInfo =
                             UserProfileChangeRequest.Builder()
@@ -543,33 +544,36 @@ class Repository @Inject constructor(
 
                 snapshot.children.forEach {
 
-                    val taskTime = it.child("dateFrom").value as Long
+                    if (it.key != "0") {
 
-                    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
 
-                    val taskDate = formatter.format(taskTime)
-                    val selectedDate = formatter.format(date)
+                        val taskTime = it.child("dateFrom").value as Long
+                        val taskDate = formatter.format(taskTime)
+                        val selectedDate = formatter.format(date)
 
-                    if (it.key != "0" && taskDate == selectedDate) {
+                        if (taskDate == selectedDate) {
 
-                        val id = it.child("id").value as Long?
-                        val icon = it.child("icon").value as Long
-                        val color = it.child("color").value as Long
-                        val reminder = it.child("reminder").value as Long
+                            val id = it.child("id").value as Long?
+                            val icon = it.child("icon").value as Long
+                            val color = it.child("color").value as Long
+                            val reminder = it.child("reminder").value as Long
 
-                        val task =  Task(
-                            id?.toInt(),
-                            it.child("type").value as Boolean,
-                            it.child("title").value as String,
-                            it.child("description").value as String,
-                            icon.toInt(),
-                            color.toInt(),
-                            it.child("dateFrom").value as Long,
-                            it.child("dateTo").value as Long,
-                            it.child("allDay").value as Boolean,
-                            reminder.toInt()
-                        )
-                        currentDayTasks.add(task)
+                            val task = Task(
+                                id?.toInt(),
+                                it.child("type").value as Boolean,
+                                it.child("title").value as String,
+                                it.child("description").value as String,
+                                icon.toInt(),
+                                color.toInt(),
+                                it.child("dateFrom").value as Long,
+                                it.child("dateTo").value as Long,
+                                it.child("allDay").value as Boolean,
+                                reminder.toInt()
+                            )
+
+                            currentDayTasks.add(task)
+                        }
                     }
                 }
 
@@ -593,4 +597,14 @@ class Repository @Inject constructor(
     private fun getUsers() = firebaseDatabase.reference.child("main").child("users")
     private fun getTasks() = firebaseDatabase.reference.child("main").child("tasks")
 
+    fun getEvents() : List<Event> {
+
+        val eventList = mutableListOf<Event>()
+        eventList.add(Event("Concert", "Its a concert.", "Osijek", 50f))
+        eventList.add(Event("Concert2", "Its a concert.", "Osijek", 100f))
+        eventList.add(Event("Marathon", "Its a marathon.", "Osijek", 100f))
+        eventList.add(Event("Theatre play", "Its a theatre play.", "Osijek", 70f))
+
+        return eventList
+    }
 }
